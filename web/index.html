@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <title>Shen.AI Test</title>
+    <link rel="icon" href="data:," />
+  </head>
+  <body>
+    <header class="topbar">
+      <button id="back-button" class="ghost" hidden>&larr; Back</button>
+      <h1>Shen.AI Test</h1>
+      <span id="sdk-version" class="muted"></span>
+    </header>
+
+    <!-- Home -->
+    <main id="home-view" class="view">
+      <section class="card">
+        <h2>API key</h2>
+        <p class="muted">
+          Get a Web API key from the <a href="https://developer.shen.ai" target="_blank" rel="noreferrer">Shen.AI Developer Portal</a>.
+          It is stored only in this browser (localStorage).
+        </p>
+        <div class="row">
+          <input id="api-key-input" type="password" placeholder="Paste your Shen.AI API key" autocomplete="off" spellcheck="false" />
+          <button id="api-key-toggle" class="ghost" type="button">Show</button>
+        </div>
+        <label class="field">
+          <span>User ID (optional)</span>
+          <input id="user-id-input" type="text" placeholder="e.g. tester-1" autocomplete="off" />
+        </label>
+      </section>
+
+      <section class="card">
+        <h2>Test the SDK</h2>
+        <div class="actions">
+          <button id="sdk-ui-button" class="primary">Measurement (SDK UI)</button>
+          <button id="custom-ui-button">Measurement (Custom UI + live metrics)</button>
+          <button id="dashboard-button">Dashboard</button>
+        </div>
+        <p id="home-status" class="status" role="status"></p>
+      </section>
+    </main>
+
+    <!-- Measurement (SDK canvas) -->
+    <main id="measure-view" class="view" hidden>
+      <div class="measure-layout">
+        <div class="canvas-wrap">
+          <canvas id="mxcanvas"></canvas>
+        </div>
+        <aside id="custom-panel" class="card panel" hidden>
+          <h2>Live</h2>
+          <p id="measure-status" class="status">Ready</p>
+          <progress id="measure-progress" max="100" value="0"></progress>
+          <div class="tiles">
+            <div class="tile"><span>Heart rate</span><strong id="live-hr">-</strong><small>bpm</small></div>
+            <div class="tile"><span>HRV SDNN</span><strong id="live-hrv">-</strong><small>ms</small></div>
+            <div class="tile"><span>Breathing</span><strong id="live-br">-</strong><small>brpm</small></div>
+            <div class="tile"><span>Blood pressure</span><strong id="live-bp">-</strong><small>mmHg</small></div>
+            <div class="tile"><span>Cardiac stress</span><strong id="live-stress">-</strong><small></small></div>
+            <div class="tile"><span>Signal quality</span><strong id="live-signal">-</strong><small>dB</small></div>
+          </div>
+          <div class="actions row">
+            <button id="start-button" class="primary">Start</button>
+            <button id="stop-button">Stop</button>
+          </div>
+          <button id="show-results-button" class="primary" hidden>Show results</button>
+        </aside>
+      </div>
+    </main>
+
+    <!-- Results -->
+    <main id="results-view" class="view" hidden>
+      <section class="card">
+        <h2>Measurement results</h2>
+        <table id="results-table"></table>
+        <div class="actions row">
+          <button id="pdf-button">Open PDF report</button>
+          <button id="json-button">Copy JSON</button>
+          <button id="home-button" class="primary">Done</button>
+        </div>
+        <p id="results-status" class="status" role="status"></p>
+      </section>
+    </main>
+
+    <details id="log-panel" class="log">
+      <summary>Event log</summary>
+      <pre id="log"></pre>
+    </details>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

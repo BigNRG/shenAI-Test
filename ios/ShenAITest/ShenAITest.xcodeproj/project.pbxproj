@@ -1,0 +1,294 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		D24F11BF7FCDC9ABCEF8A3EB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C23EA49C5BF5C3BE7C5B40 /* AppDelegate.swift */; };
+		170689BC29A008509EE72CBE /* ShenaiSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7965E4DB4EA646F8EECD2066 /* ShenaiSession.swift */; };
+		51D8283F732E850FFD290919 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA61011F57EF70D9C57A6B7E /* HomeViewController.swift */; };
+		E25D5143C83863C6090BF203 /* SessionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C45084E0F2D4DE1E6B73E97 /* SessionViewController.swift */; };
+		92F7178A8617B4441F67CD1A /* ResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9189210ADB5A6FFB811F8B76 /* ResultsViewController.swift */; };
+		B6FF9335B29BD785C7CB5567 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18C08FF7DFFA4E83D51E9162 /* Assets.xcassets */; };
+		D3C90BEEB5BB0BCEF9B60D08 /* ShenaiSDK in Frameworks */ = {isa = PBXBuildFile; productRef = 01519D3858A6CE08B88CAB94 /* ShenaiSDK */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		9CDAFBE61E5878E8B220A23B /* ShenAITest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShenAITest.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		50C23EA49C5BF5C3BE7C5B40 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7965E4DB4EA646F8EECD2066 /* ShenaiSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShenaiSession.swift; sourceTree = "<group>"; };
+		DA61011F57EF70D9C57A6B7E /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		0C45084E0F2D4DE1E6B73E97 /* SessionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionViewController.swift; sourceTree = "<group>"; };
+		9189210ADB5A6FFB811F8B76 /* ResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultsViewController.swift; sourceTree = "<group>"; };
+		18C08FF7DFFA4E83D51E9162 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		9E67030F9F75CC75FBEEE72F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DBA548B924B6242154F4ED5A /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		6EF9D5F186D5E277F49284BE /* Secrets.example.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.example.xcconfig; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		39BF3271287D80ACD04FF07A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D3C90BEEB5BB0BCEF9B60D08 /* ShenaiSDK in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		685A065EF5E10FADC5873157 = {
+			isa = PBXGroup;
+			children = (
+				DBA548B924B6242154F4ED5A /* Config.xcconfig */,
+				6EF9D5F186D5E277F49284BE /* Secrets.example.xcconfig */,
+				3E27917AC6B9CE05E77C9057 /* ShenAITest */,
+				50D42BAC0BC7A69042F77ACC /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3E27917AC6B9CE05E77C9057 /* ShenAITest */ = {
+			isa = PBXGroup;
+			children = (
+				50C23EA49C5BF5C3BE7C5B40 /* AppDelegate.swift */,
+				7965E4DB4EA646F8EECD2066 /* ShenaiSession.swift */,
+				DA61011F57EF70D9C57A6B7E /* HomeViewController.swift */,
+				0C45084E0F2D4DE1E6B73E97 /* SessionViewController.swift */,
+				9189210ADB5A6FFB811F8B76 /* ResultsViewController.swift */,
+				18C08FF7DFFA4E83D51E9162 /* Assets.xcassets */,
+				9E67030F9F75CC75FBEEE72F /* Info.plist */,
+			);
+			path = ShenAITest;
+			sourceTree = "<group>";
+		};
+		50D42BAC0BC7A69042F77ACC /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9CDAFBE61E5878E8B220A23B /* ShenAITest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		569A3CB12B991A529B36EDFA /* ShenAITest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2979807C021B566567FCF527 /* Build configuration list for PBXNativeTarget "ShenAITest" */;
+			buildPhases = (
+				62445D9125A6F06E43047A0A /* Sources */,
+				39BF3271287D80ACD04FF07A /* Frameworks */,
+				A9ACE8F26697E73277AE8B71 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShenAITest;
+			packageProductDependencies = (
+				01519D3858A6CE08B88CAB94 /* ShenaiSDK */,
+			);
+			productName = ShenAITest;
+			productReference = 9CDAFBE61E5878E8B220A23B /* ShenAITest.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		DA0E53E139A5BEDB199F3AEF /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					569A3CB12B991A529B36EDFA = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = E9872DEB4C3B258CA43C5064 /* Build configuration list for PBXProject "ShenAITest" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 685A065EF5E10FADC5873157;
+			packageReferences = (
+				7134700CF037E68EE471D635 /* XCRemoteSwiftPackageReference "ShenaiSDK" */,
+			);
+			productRefGroup = 50D42BAC0BC7A69042F77ACC /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				569A3CB12B991A529B36EDFA /* ShenAITest */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A9ACE8F26697E73277AE8B71 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B6FF9335B29BD785C7CB5567 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		62445D9125A6F06E43047A0A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D24F11BF7FCDC9ABCEF8A3EB /* AppDelegate.swift in Sources */,
+				170689BC29A008509EE72CBE /* ShenaiSession.swift in Sources */,
+				51D8283F732E850FFD290919 /* HomeViewController.swift in Sources */,
+				E25D5143C83863C6090BF203 /* SessionViewController.swift in Sources */,
+				92F7178A8617B4441F67CD1A /* ResultsViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		49B30D801614ABAE2FD7C39E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		4BD9839733370CAC97005F42 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		F46B272684C3A83D81C5227D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBA548B924B6242154F4ED5A /* Config.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShenAITest/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		29A0F1171D9EB140F47F074F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBA548B924B6242154F4ED5A /* Config.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ShenAITest/Info.plist;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E9872DEB4C3B258CA43C5064 /* Build configuration list for PBXProject "ShenAITest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				49B30D801614ABAE2FD7C39E /* Debug */,
+				4BD9839733370CAC97005F42 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		2979807C021B566567FCF527 /* Build configuration list for PBXNativeTarget "ShenAITest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F46B272684C3A83D81C5227D /* Debug */,
+				29A0F1171D9EB140F47F074F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7134700CF037E68EE471D635 /* XCRemoteSwiftPackageReference "ShenaiSDK" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mxlaboratories/ShenaiSDK.git";
+			requirement = {
+				kind = exactVersion;
+				version = 3.1.14;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		01519D3858A6CE08B88CAB94 /* ShenaiSDK */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7134700CF037E68EE471D635 /* XCRemoteSwiftPackageReference "ShenaiSDK" */;
+			productName = ShenaiSDK;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = DA0E53E139A5BEDB199F3AEF /* Project object */;
+}

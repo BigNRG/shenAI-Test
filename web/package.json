@@ -1,0 +1,20 @@
+{
+  "name": "shenai-test-web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "copy-sdk": "node scripts/copy-sdk.mjs",
+    "dev": "npm run copy-sdk && vite",
+    "build": "npm run copy-sdk && tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@shenai/sdk": "3.1.14"
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0"
+  }
+}
