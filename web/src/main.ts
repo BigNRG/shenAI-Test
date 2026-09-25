@@ -1,10 +1,10 @@
 import "./style.css";
-import CreateShenaiSDK from "@shenai/sdk";
 import type {
   EventName,
   InitializationSettings,
   MeasurementResults,
   RisksFactors,
+  ShenaiArguments,
   ShenaiSDK,
 } from "@shenai/sdk";
 
@@ -63,6 +63,7 @@ const ui = {
   json: $<HTMLButtonElement>("json-button"),
   home: $<HTMLButtonElement>("home-button"),
   resultsStatus: $("results-status"),
+  sessionStatus: $("session-status"),
   log: $("log"),
 };
 
@@ -119,6 +120,18 @@ function sameEnum(a: { value: number } | null | undefined, b: { value: number })
 // SDK runtime (loaded once, initialized per session)
 // ---------------------------------------------------------------------------
 
+// The SDK is loaded at runtime from public/shenai-sdk (copied by scripts/copy-sdk.mjs)
+// instead of being bundled: Vite's dev-server dependency optimizer rewrites the
+// package and breaks the SDK's module worker, which makes initialization hang.
+const SDK_MODULE_URL = "/shenai-sdk/index.mjs";
+const INIT_TIMEOUT_MS = 45_000;
+
+async function importSdk(): Promise<(args: ShenaiArguments) => Promise<ShenaiSDK>> {
+  // Absolute URL so Vite's dev server doesn't rewrite the import (it treats "/..." paths as its own modules).
+  const mod = await import(/* @vite-ignore */ new URL(SDK_MODULE_URL, window.location.origin).href);
+  return mod.default;
+}
+
 let sdkPromise: Promise<ShenaiSDK> | null = null;
 let sdk: ShenaiSDK | null = null;
 let mode: Mode | null = null;
@@ -128,7 +141,8 @@ let lastResults: MeasurementResults | null = null;
 function loadSdk(): Promise<ShenaiSDK> {
   if (!sdkPromise) {
     setStatus(ui.homeStatus, "Loading Shen.AI SDK runtime...");
-    sdkPromise = CreateShenaiSDK({
+    log("Loading SDK runtime from /shenai-sdk/ ...");
+    sdkPromise = importSdk().then((CreateShenaiSDK) => CreateShenaiSDK({
       // Load the WASM + worker files from public/shenai-sdk (copied by scripts/copy-sdk.mjs).
       locateFile: (filename: string) => "/shenai-sdk/" + filename,
       wasmLoadingProgressCallback: (p: number) => setStatus(ui.homeStatus, `Loading SDK runtime... ${Math.round(p)}%`),
@@ -139,7 +153,7 @@ function loadSdk(): Promise<ShenaiSDK> {
       log(`SDK runtime loaded, version ${instance.getVersion()}`);
       (window as unknown as { shenai: ShenaiSDK }).shenai = instance; // handy for console debugging
       return instance;
-    });
+    }));
     sdkPromise.catch((err) => {
       sdkPromise = null;
       setStatus(ui.homeStatus, `Failed to load SDK: ${err}`, true);
@@ -278,8 +292,28 @@ async function openMode(m: Mode) {
   setStatus(ui.homeStatus, "Initializing SDK (activating license)...");
   log(`Initializing SDK in "${m}" mode`);
 
-  s.initialize(apiKey, ui.userId.value.trim(), settingsFor(s, m), (result) => {
+  setStatus(ui.sessionStatus, "Initializing SDK (activating license)...");
+  let settled = false;
+  const timeout = window.setTimeout(() => {
+    if (settled) return;
+    settled = true;
+    log(`Initialization timed out after ${INIT_TIMEOUT_MS / 1000}s`);
     setButtonsEnabled(true);
+    mode = null;
+    showView("home");
+    setStatus(
+      ui.homeStatus,
+      "Initialization timed out. Check the browser console for errors and that the page is cross-origin isolated.",
+      true,
+    );
+  }, INIT_TIMEOUT_MS);
+
+  s.initialize(apiKey, ui.userId.value.trim(), settingsFor(s, m), (result) => {
+    if (settled) return;
+    settled = true;
+    window.clearTimeout(timeout);
+    setButtonsEnabled(true);
+    setStatus(ui.sessionStatus, "");
     if (!sameEnum(result, s.InitializationResult.OK)) {
       const name = enumName(s.InitializationResult, result);
       log(`Initialization failed: ${name}`);
@@ -537,6 +571,9 @@ ui.json.addEventListener("click", async () => {
     console.log(lastResults);
   }
 });
+
+window.addEventListener("error", (e) => log(`Error: ${e.message || e.type}`));
+window.addEventListener("unhandledrejection", (e) => log(`Unhandled rejection: ${String(e.reason)}`));
 
 if (!window.crossOriginIsolated) {
   setStatus(

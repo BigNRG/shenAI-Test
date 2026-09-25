@@ -24,7 +24,7 @@ Production build: `npm run build`, then `npm run preview` (http://localhost:4173
   `vite.config.ts` sets these for `dev` and `preview`. If you host `dist/` somewhere else, configure the same headers there.
   If they are missing, the home screen shows a warning.
 - **The camera needs a secure context.** `http://localhost` works. To test from a phone, serve over HTTPS, for example with an HTTPS tunnel, or with `vite --host` plus a certificate.
-- `scripts/copy-sdk.mjs` copies the SDK's `.wasm` and worker files into `public/shenai-sdk/`, where `locateFile` loads them from. This runs automatically before `dev` and `build`.
+- `scripts/copy-sdk.mjs` copies the SDK into `public/shenai-sdk/`, and the app loads it from there at runtime. This runs automatically before `dev` and `build`. The SDK is deliberately not bundled by Vite: Vite's dev-server dependency optimizer breaks the SDK's module worker, which made initialization hang.
 - For debugging, the SDK instance is exposed as `window.shenai`. The in-page **Event log** shows SDK events.
 
 ## Files

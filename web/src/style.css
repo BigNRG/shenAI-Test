@@ -85,3 +85,4 @@ tr.section td { font-weight: 600; padding-top: 14px; border-bottom: none; }
 
 .log { max-width: 980px; margin: 0 auto 16px; padding: 0 16px; font-size: 12px; }
 .log pre { max-height: 200px; overflow: auto; background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 8px; white-space: pre-wrap; }
+#session-status:empty { display: none; }
