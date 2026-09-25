@@ -117,7 +117,8 @@ function sameEnum(a: { value: number } | null | undefined, b: { value: number })
 }
 
 // ---------------------------------------------------------------------------
-// SDK runtime (loaded once, initialized per session)
+// SDK runtime: created on first use, while the canvas is visible (the SDK takes
+// over the canvas at creation), then reused; each session initializes/deinitializes.
 // ---------------------------------------------------------------------------
 
 // The SDK is loaded at runtime from public/shenai-sdk (copied by scripts/copy-sdk.mjs)
@@ -137,19 +138,21 @@ let sdk: ShenaiSDK | null = null;
 let mode: Mode | null = null;
 let pollTimer: number | undefined;
 let lastResults: MeasurementResults | null = null;
+let cameraError: string | null = null;
+let diagTimer: number | undefined;
 
 function loadSdk(): Promise<ShenaiSDK> {
   if (!sdkPromise) {
-    setStatus(ui.homeStatus, "Loading Shen.AI SDK runtime...");
+    setStatus(ui.sessionStatus, "Loading Shen.AI SDK runtime...");
     log("Loading SDK runtime from /shenai-sdk/ ...");
     sdkPromise = importSdk().then((CreateShenaiSDK) => CreateShenaiSDK({
       // Load the WASM + worker files from public/shenai-sdk (copied by scripts/copy-sdk.mjs).
       locateFile: (filename: string) => "/shenai-sdk/" + filename,
-      wasmLoadingProgressCallback: (p: number) => setStatus(ui.homeStatus, `Loading SDK runtime... ${Math.round(p)}%`),
+      wasmLoadingProgressCallback: (p: number) => setStatus(ui.sessionStatus, `Loading SDK runtime... ${Math.round(p)}%`),
     }).then((instance) => {
       sdk = instance;
       ui.version.textContent = `SDK ${instance.getVersion()}`;
-      setStatus(ui.homeStatus, "SDK runtime loaded.");
+      setStatus(ui.sessionStatus, "SDK runtime loaded.");
       log(`SDK runtime loaded, version ${instance.getVersion()}`);
       (window as unknown as { shenai: ShenaiSDK }).shenai = instance; // handy for console debugging
       return instance;
@@ -194,9 +197,10 @@ function settingsFor(s: ShenaiSDK, m: Mode): InitializationSettings {
     risksFactors: exampleRiskFactors(s),
     eventCallback: (event: EventName) => onSdkEvent(event),
     onCameraError: () => {
-      const err = s.getLastCameraError();
-      log(`Camera error: ${enumName(s.CameraError, err)}`);
-      setStatus(ui.measureStatus, "Camera error - check browser camera permission.", true);
+      const err = enumName(s.CameraError, s.getLastCameraError());
+      cameraError = `Camera error: ${err}. Allow camera access for this site and make sure no other app is using the camera.`;
+      log(`Camera error: ${err}`);
+      setStatus(ui.sessionStatus, cameraError, true);
     },
   };
 
@@ -272,25 +276,33 @@ async function openMode(m: Mode) {
   storageSet(USER_ID_STORAGE, ui.userId.value.trim());
   setButtonsEnabled(false);
 
+  // The canvas must be visible (laid out, non-zero size) before the SDK runtime
+  // is created: the SDK takes over the canvas and transfers it to its worker.
+  mode = m;
+  lastResults = null;
+  cameraError = null;
+  ui.customPanel.hidden = m !== "custom-ui";
+  ui.measureLayout.classList.toggle("with-panel", m === "custom-ui");
+  showView("measure");
+  resetLivePanel();
+  setStatus(ui.homeStatus, "");
+  await nextFrame();
+
   let s: ShenaiSDK;
   try {
     s = await loadSdk();
   } catch {
     setButtonsEnabled(true);
+    mode = null;
+    showView("home");
     return;
   }
+  if (mode !== m) return; // user pressed Back while the runtime was loading
 
   if (s.isInitialized()) s.deinitialize();
-
-  // The canvas must be visible (non-zero size) when the SDK attaches to it.
-  mode = m;
-  lastResults = null;
-  ui.customPanel.hidden = m !== "custom-ui";
-  ui.measureLayout.classList.toggle("with-panel", m === "custom-ui");
-  showView("measure");
-  resetLivePanel();
-  setStatus(ui.homeStatus, "Initializing SDK (activating license)...");
-  log(`Initializing SDK in "${m}" mode`);
+  const canvas = document.getElementById("mxcanvas");
+  const rect = canvas?.getBoundingClientRect();
+  log(`Initializing SDK in "${m}" mode (canvas ${Math.round(rect?.width ?? 0)}x${Math.round(rect?.height ?? 0)}, isolated=${window.crossOriginIsolated})`);
 
   setStatus(ui.sessionStatus, "Initializing SDK (activating license)...");
   let settled = false;
@@ -298,9 +310,7 @@ async function openMode(m: Mode) {
     if (settled) return;
     settled = true;
     log(`Initialization timed out after ${INIT_TIMEOUT_MS / 1000}s`);
-    setButtonsEnabled(true);
-    mode = null;
-    showView("home");
+    closeSession();
     setStatus(
       ui.homeStatus,
       "Initialization timed out. Check the browser console for errors and that the page is cross-origin isolated.",
@@ -312,18 +322,20 @@ async function openMode(m: Mode) {
     if (settled) return;
     settled = true;
     window.clearTimeout(timeout);
+    if (mode !== m) return; // session was closed while initializing
     setButtonsEnabled(true);
     setStatus(ui.sessionStatus, "");
     if (!sameEnum(result, s.InitializationResult.OK)) {
       const name = enumName(s.InitializationResult, result);
       log(`Initialization failed: ${name}`);
-      mode = null;
-      showView("home");
+      closeSession();
       setStatus(ui.homeStatus, `Initialization failed: ${name}. Check the API key and network.`, true);
       return;
     }
     log("SDK initialized (license activated)");
     setStatus(ui.homeStatus, "");
+    if (cameraError) setStatus(ui.sessionStatus, cameraError, true);
+    startDiagnostics(s);
     if (m === "sdk-ui") {
       s.resetMeasurementSession();
       s.setScreen(s.Screen.MEASUREMENT);
@@ -334,12 +346,56 @@ async function openMode(m: Mode) {
 
 function closeSession() {
   stopPolling();
-  if (sdk?.isInitialized()) {
-    sdk.deinitialize();
-    log("SDK deinitialized");
-  }
+  stopDiagnostics();
+  endSdkSession();
   mode = null;
+  setStatus(ui.sessionStatus, "");
+  setButtonsEnabled(true);
   showView("home");
+}
+
+function endSdkSession() {
+  // Keep the runtime (and the canvas it owns) alive across sessions; only
+  // deinitialize. Deferred because this can run inside an SDK callback.
+  const s = sdk;
+  window.setTimeout(() => {
+    try {
+      if (s?.isInitialized()) {
+        s.deinitialize();
+        log("SDK deinitialized");
+      }
+    } catch (err) {
+      log(`Error while deinitializing SDK: ${err}`);
+    }
+  }, 0);
+}
+
+function nextFrame(): Promise<void> {
+  return new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(() => resolve())));
+}
+
+// Periodically log camera/face/measurement state so problems are visible in the event log.
+function startDiagnostics(s: ShenaiSDK) {
+  stopDiagnostics();
+  let last = "";
+  const tick = () => {
+    if (!s.isInitialized()) return;
+    const line =
+      `camera=${enumName(s.CameraMode, s.getCameraMode())}` +
+      ` cameraError=${enumName(s.CameraError, s.getLastCameraError())}` +
+      ` face=${enumName(s.FaceState, s.getFaceState())}` +
+      ` state=${enumName(s.MeasurementState, s.getMeasurementState())}` +
+      ` screen=${enumName(s.Screen, s.getScreen())}`;
+    if (line !== last) log(line);
+    last = line;
+  };
+  tick();
+  diagTimer = window.setInterval(tick, 2000);
+}
+
+function stopDiagnostics() {
+  if (diagTimer !== undefined) window.clearInterval(diagTimer);
+  diagTimer = undefined;
 }
 
 function onSdkEvent(event: EventName) {
@@ -421,7 +477,7 @@ function poll() {
   const running = isRunning(s);
   const finished = sameEnum(s.getMeasurementState(), s.MeasurementState.FINISHED);
 
-  setStatus(ui.measureStatus, statusText(s));
+  setStatus(ui.measureStatus, cameraError ?? statusText(s), !!cameraError);
   ui.progress.value = s.getMeasurementProgressPercentage();
   ui.liveSignal.textContent = fmt(s.getCurrentSignalQualityMetric(), 1);
   ui.start.disabled = running;
@@ -583,6 +639,4 @@ if (!window.crossOriginIsolated) {
   );
 }
 
-// Start downloading the WASM runtime right away so the first session opens faster.
-loadSdk().catch(() => undefined);
 showView("home");
